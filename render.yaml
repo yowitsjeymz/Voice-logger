@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: discord-vc-logger
+    name: discord-auto-vc-recorder
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -11,7 +11,13 @@ services:
         value: 3.12.8
       - key: DISCORD_TOKEN
         sync: false
-      - key: LOG_CHANNEL_ID
-        sync: false
       - key: GUILD_ID
         sync: false
+      - key: LOG_CHANNEL_ID
+        sync: false
+      - key: RECORDING_CHANNEL_ID
+        sync: false
+      - key: AUTO_RECORD
+        value: "true"
+      - key: UPLOAD_LIMIT_MB
+        value: "24"

@@ -1,86 +1,59 @@
-# Discord VC Logger for Render
+# Discord Auto VC Recorder — Separate Log and Recording Channels
 
-This bot:
+This version separates ordinary logs from recording files.
 
-- Logs voice-channel joins, leaves, and moves.
-- Records attendance time and session duration.
-- Automatically joins the first active member's voice channel.
-- Moves to another channel only when no human remains in its current channel.
-- Disconnects when its current channel becomes empty.
-- Does **not** capture or save anyone's audio.
+## Destinations
 
-## 1. Create the Discord bot
+- `LOG_CHANNEL_ID`
+  - Recording started notice
+  - Recording ended notice
+  - Duration, channel, trigger, and mode
 
-1. Open the Discord Developer Portal and create an application.
-2. Open **Bot**, create the bot, and copy its token.
-3. Under **Privileged Gateway Intents**, enable **Server Members Intent**.
-4. Never place the real token in GitHub.
+- `RECORDING_CHANNEL_ID`
+  - Audio files only
+  - Separate WAV file for each recorded participant
+  - Basic recording-session information
 
-## 2. Invite permissions
+The bot does not DM recordings and does not post recording files in the command channel.
 
-Give the bot these permissions:
+## Commands
 
-- View Channels
+- `/record`
+- `/stop`
+- `/recording_status`
+
+## Render environment variables
+
+```env
+DISCORD_TOKEN=your_bot_token
+GUILD_ID=your_server_id
+LOG_CHANNEL_ID=your_activity_logs_channel_id
+RECORDING_CHANNEL_ID=your_private_voice_record_channel_id
+AUTO_RECORD=true
+UPLOAD_LIMIT_MB=24
+```
+
+Keep the recording channel private by allowing access only to authorized staff roles and the bot.
+
+## Required bot permissions
+
+For both text channels:
+
+- View Channel
 - Send Messages
 - Embed Links
+- Attach Files
+- Read Message History
+
+For voice channels:
+
+- View Channel
 - Connect
 - Speak
 
-The bot does not transmit audio, but Discord voice connections may require normal voice permissions.
+Enable Server Members Intent in the Discord Developer Portal.
 
-## 3. Get IDs
+## Privacy
 
-Enable Discord Developer Mode:
-
-**User Settings → Advanced → Developer Mode**
-
-Then right-click and copy:
-
-- The server ID → `GUILD_ID`
-- The log channel ID → `LOG_CHANNEL_ID`
-
-`GUILD_ID` is optional. Leaving it blank allows every server containing the bot, but setting it is safer.
-
-## 4. Upload to GitHub
-
-Upload these files:
-
-- `bot.py`
-- `requirements.txt`
-- `render.yaml`
-
-Do not upload `.env`.
-
-## 5. Deploy on Render
-
-### Blueprint method
-
-1. In Render, choose **New → Blueprint**.
-2. Select the GitHub repository.
-3. Add the requested secret environment variables:
-   - `DISCORD_TOKEN`
-   - `LOG_CHANNEL_ID`
-   - `GUILD_ID`
-4. Deploy.
-
-### Manual method
-
-Create a **Web Service** with:
-
-- Runtime: Python
-- Build command: `pip install -r requirements.txt`
-- Start command: `python bot.py`
-- Health check path: `/health`
-
-Add the three environment variables under the service's Environment page.
-
-## Important Render note
-
-Render's free Web Service may spin down after a period without incoming HTTP requests.
-The bot includes `/` and `/health` endpoints, but keeping a free service continuously awake may
-require periodic legitimate HTTP traffic. A paid always-on service or worker is more reliable.
-
-## Privacy note
-
-This project records attendance events, not conversations. Recording people's audio without clear
-notice and consent may violate server rules, Discord policies, or applicable law.
+The bot posts a clear recording notice. Do not use it for secret recording. Make sure all
+participants are informed and that your use follows applicable rules and laws.
